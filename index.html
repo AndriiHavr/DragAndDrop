@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag and Drop Cards</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: space-around;
+            margin: 50px;
+        }
+        .container {
+            width: 200px;
+            min-height: 300px;
+            padding: 10px;
+            border: 2px dashed #ccc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .card {
+            width: 150px;
+            padding: 10px;
+            background-color: lightblue;
+            text-align: center;
+            cursor: grab;
+            border-radius: 5px;
+            user-select: none;
+        }
+        .hidden {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="source">
+        <div class="card" draggable="true">Card 1</div>
+        <div class="card" draggable="true">Card 2</div>
+        <div class="card" draggable="true">Card 3</div>
+    </div>
+    <div class="container drop-zone" id="destination">
+        <p>Drop here</p>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const cards = document.querySelectorAll(".card");
+            const dropZones = document.querySelectorAll(".drop-zone");
+            let draggedCard = null;
+
+            cards.forEach(card => {
+                card.addEventListener("dragstart", (e) => {
+                    draggedCard = card;
+                    setTimeout(() => card.classList.add("hidden"), 0);
+                });
+
+                card.addEventListener("dragend", () => {
+                    draggedCard.classList.remove("hidden");
+                    draggedCard = null;
+                });
+            });
+
+            dropZones.forEach(zone => {
+                zone.addEventListener("dragover", (e) => {
+                    e.preventDefault();
+                });
+                
+                zone.addEventListener("drop", (e) => {
+                    e.preventDefault();
+                    if (draggedCard) {
+                        if (zone.querySelector("p")) {
+                            zone.querySelector("p").remove();
+                        }
+                        zone.appendChild(draggedCard);
+                    }
+                });
+            });
+
+            // Альтернативний метод - клік і додавання в зону
+            cards.forEach(card => {
+                card.addEventListener("click", () => {
+                    const targetZone = document.querySelector(".drop-zone");
+                    if (targetZone.querySelector("p")) {
+                        targetZone.querySelector("p").remove();
+                    }
+                    targetZone.appendChild(card);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
